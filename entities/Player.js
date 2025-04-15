@@ -1,4 +1,3 @@
-create
 
 
 class Player extends Phaser.Physics.Arcade.Sprite {
@@ -271,16 +270,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
         else {
             if (this.isJumpRequested) {
-                if (this.jumpCount === 1) {
+                if (this.jumpCount === 0) {
                   this.play("jump", true);       
-                } else if (this.jumpCount === 2) {
-                  this.play("jump2", true);      
+                } else if (this.jumpCount === 1) {
+                  this.play("jump2", true);  
                 }
               
                 this.jumpEffect();
                 this.jumpSound2.play();
                 this.isJumpRequested = false;
-              }              
+              }
+                           
             else if (this.previousVelocityY <= 0 && this.body.velocity.y > 0) {
 
                 this.play("jumpfall", true);

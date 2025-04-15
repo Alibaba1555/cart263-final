@@ -137,14 +137,6 @@ function PlayerAnimation(anims) {
         });
     }
 
-    if (!anims.exists('jump2')) {
-        anims.create({
-            key: "jump2",
-            frames: anims.generateFrameNumbers("avatar-jump2", { start: 0, end: 10 }),
-            frameRate: 15,
-            repeat: 0
-        });
-    }
 
     if (!anims.exists('wind-1')) {
         anims.create({
