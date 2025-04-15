@@ -67,6 +67,16 @@ function PlayerAnimation(anims) {
             repeat: -1
         });
     }
+    
+    if (!anims.exists('jump2')) {
+        anims.create({
+            key: "jump2",
+            frames: anims.generateFrameNumbers("avatar-jump2", { start: 0, end: 11 }),
+            frameRate: 18,
+            repeat: 0
+          }); 
+    }
+
     if (!anims.exists('fall')) {
         anims.create({
             key: "fall",
