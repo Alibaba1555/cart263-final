@@ -210,6 +210,10 @@ class Boot extends Phaser.Scene {
         this.load.audio('pickup', "Assets/Audio/coin_pickup.wav");
         this.load.audio('stepSound', "Assets/Audio/step_mud.wav");
 
+        //effect
+        this.load.image("jump-cross", "Assets/Effect/jumpCross.png");
+
+
         this.load.on('complete', () => {
             this.startGame();
         });

@@ -110,34 +110,62 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
         //launch projectile
         this.scene.input.keyboard.on('keydown-C', () => {
-
             if (
-                this.isInLaunchCoolDown() ||
-                this.hasBeenHit ||
-                this.isRolling ||
-                this.isAttacking ||
-                this.currentMana <= 0
+              this.isInLaunchCoolDown() ||
+              this.hasBeenHit ||
+              this.isRolling ||
+              this.isAttacking ||
+              this.currentMana <= 0
             ) {
-                console.log("Cannot launch: busy or in cooldown");
-                return;
+              console.log("Cannot launch: busy or in cooldown");
+              return;
             }
+          
+          
             this.isLaunchAnimationPlaying = true;
+            this.setAlpha(1); 
+            this.isInvincible = true; 
+          
             this.play("launch", true);
-            this.projectileSound.play();
-            //console.log(this.scene.anims.exists('launch'));
+                    
+     
+            this.scene.cameras.main.shake(300, 0.015);
+          
+    
+            const flash = this.scene.add.rectangle(
+              this.scene.cameras.main.centerX,
+              this.scene.cameras.main.centerY,
+              this.scene.cameras.main.width,
+              this.scene.cameras.main.height,
+              0xffffff,
+              0.6
+            ).setScrollFactor(0).setDepth(999);
+            this.scene.tweens.add({
+              targets: flash,
+              alpha: 0,
+              duration: 200,
+              onComplete: () => flash.destroy()
+            });
+          
+            const particles = this.scene.add.particles("jump-cross").setDepth(100);
+            particles.emitParticleAt(this.x, this.y, 25);
+            this.scene.time.delayedCall(600, () => particles.destroy());
+          
+
+            this.ProjectilesPool.fireProjectile(this, 0, 20); 
+     
+            this.once("animationcomplete", () => {
+              this.isLaunchAnimationPlaying = false;
+              this.isInvincible = false;
+              this.handleAnimation();
+            });     
+       
             this.currentMana -= this.manaCost;
             this.mana.decrease(this.currentMana);
-
-
-            this.once("animationcomplete", () => {
-                this.isLaunchAnimationPlaying = false;
-                this.handleAnimation();
-            });
-
-            this.ProjectilesPool.fireProjectile(this, 0, 30);
-
+          
             this.lastLaunchTime = this.scene.time.now;
-        });
+          });
+
     }
 
     initEvents() {
@@ -274,6 +302,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
                   this.play("jump", true);       
                 } else if (this.jumpCount === 1) {
                   this.play("jump2", true);  
+                  this.spawnSuperJumpEffect();
                 }
               
                 this.jumpEffect();
@@ -394,6 +423,76 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
 
 
+ 
+spawnSuperJumpEffect() {
+
+    // if (this.jumpCrossEffect && this.jumpCrossEffect.active) {
+    //   this.scene.events.off("update", this.jumpCrossEffect.update, this.jumpCrossEffect);
+    //   this.jumpCrossEffect.destroy();
+    // }
+  
+    // const cross = this.scene.add.sprite(this.x, this.y + 40, "jump-cross")
+    //   .setScale(0.05)
+    //   .setAlpha(1)
+    //   .setDepth(100)
+    //   .setBlendMode(Phaser.BlendModes.ADD);
+  
+    // cross.followTarget = this;
+    // cross.followOffsetY = +40;
+    // cross.timer = 0;
+    // cross.update = (time, delta) => {
+    //   cross.x = cross.followTarget.x;
+    //   cross.y = cross.followTarget.y + cross.followOffsetY;
+    //   cross.timer += delta;
+    //   if (cross.timer >= 800) cross.destroy();
+    // };
+    // this.scene.events.on("update", cross.update, cross);
+  
+    // this.scene.tweens.add({
+    //   targets: cross,
+    //   alpha: 0,
+    //   scale: 0.2,
+    //   angle: 360, 
+    //   duration: 800,
+    //   ease: "Sine.easeOut",
+    //   onComplete: () => {
+    //     this.scene.events.off("update", cross.update, cross);
+    //   }
+    // });
+    // this.jumpCrossEffect = cross;
+  
+    
+    // const orb = this.scene.add.circle(this.x, this.y + 40, 60, 0xffffff, 0.4)
+    //   .setBlendMode(Phaser.BlendModes.ADD)
+    //   .setDepth(90);
+    // this.scene.tweens.add({
+    //   targets: orb,
+    //   alpha: 0,
+    //   scale: 0.1,
+    //   duration: 400,
+    //   ease: "Expo.easeOut",
+    //   onComplete: () => orb.destroy()
+    // });
+  
+    // const label = this.scene.add.text(this.x, this.y - 100, 'POWER UP↑↑', {
+    //   fontFamily: 'PixelFont',
+    //   fontSize: '12px',
+    //   color: '#FFD700'
+    // }).setOrigin(0.5).setDepth(110);
+  
+    // this.scene.tweens.add({
+    //   targets: label,
+    //   y: label.y - 30,
+    //   alpha: 0,
+    //   duration: 1000,
+    //   onComplete: () => label.destroy()
+    // });
+  
+    // this.scene.cameras.main.shake(150, 0.01);
+
+  }
+  
+      
 
     playDamageTween() {
         return this.scene.tweens.add({
